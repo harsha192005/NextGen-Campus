@@ -7,6 +7,13 @@ export const connectDatabase = async () => {
     throw new Error('MONGODB_URI is not configured');
   }
 
-  const conn = await mongoose.connect(uri);
-  console.log(`MongoDB connected: ${conn.connection.host}`);
+  try {
+    const conn = await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 15000,
+    });
+    console.log(`MongoDB connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error('MongoDB connection failed. Check MONGODB_URI and MongoDB Atlas Network Access.');
+    throw error;
+  }
 };

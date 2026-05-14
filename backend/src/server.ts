@@ -18,6 +18,13 @@ import { ensureAdminUser } from './utils/seedAdmin.js';
 
 dotenv.config();
 
+const requiredEnv = ['MONGODB_URI', 'JWT_SECRET', 'FRONTEND_URL', 'ADMIN_EMAIL', 'ADMIN_PASSWORD'];
+const missingEnv = requiredEnv.filter((key) => !process.env[key]);
+
+if (missingEnv.length > 0) {
+  throw new Error(`Missing required environment variables: ${missingEnv.join(', ')}`);
+}
+
 const app = express();
 const port = Number(process.env.PORT || 5000);
 const httpServer = createServer(app);
@@ -84,6 +91,10 @@ const start = async () => {
 };
 
 start().catch((error) => {
-  console.error('Failed to start server:', error);
+  console.error('Failed to start server');
+  console.error(error instanceof Error ? `${error.name}: ${error.message}` : error);
+  if (error instanceof Error && error.stack) {
+    console.error(error.stack);
+  }
   process.exit(1);
 });
