@@ -18,6 +18,8 @@ import AttendanceScanner from './pages/admin/AttendanceScanner';
 import Teams from './pages/student/Teams';
 import Layout from './components/Layout';
 
+const routerBaseName = import.meta.env.BASE_URL === '/' ? undefined : import.meta.env.BASE_URL.replace(/\/$/, '');
+
 // Protected Route Component
 const ProtectedRoute = ({ children, requiredRole }: { children: React.ReactNode; requiredRole?: string }) => {
   const { isAuthenticated, user } = useAuthStore();
@@ -37,7 +39,7 @@ function App() {
   const { isAuthenticated, user } = useAuthStore();
 
   return (
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
+    <BrowserRouter basename={routerBaseName}>
       <Toaster
         position="top-right"
         toastOptions={{
