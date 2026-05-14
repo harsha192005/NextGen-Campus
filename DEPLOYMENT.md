@@ -148,7 +148,7 @@ render.yaml
    - Name: `nextgen-smart-campus-api`
    - Environment: `Node`
    - Root Directory: `backend`
-   - Build Command: `npm install && npm run build`
+   - Build Command: `npm install --include=dev && npm run build`
    - Start Command: `npm start`
    - Health Check Path: `/api/health`
 
@@ -251,6 +251,23 @@ VITE_EMAILJS_SERVICE_ID=
 VITE_EMAILJS_TEMPLATE_ID=
 VITE_EMAILJS_PUBLIC_KEY=
 ```
+
+## Render Build Error: Missing Type Declarations
+
+If Render shows errors like this:
+
+```text
+Could not find a declaration file for module 'express'
+Try `npm i --save-dev @types/express`
+```
+
+Use this backend Build Command:
+
+```bash
+npm install --include=dev && npm run build
+```
+
+Render may skip dev dependencies when `NODE_ENV=production` is set. TypeScript needs dev dependencies during the build, even though they are not needed at runtime.
 
 ## Production Checks
 
