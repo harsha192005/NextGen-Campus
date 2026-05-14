@@ -5,7 +5,9 @@ A comprehensive, full-stack AI-powered college event and hackathon management sy
 ## Live Server
 
 - Frontend: https://harsha192005.github.io/NextGen-Campus/
+  
 - Backend health check: `https://your-render-service.onrender.com/api/health`
+  
 - GitHub repository: https://github.com/harsha192005/NextGen-Campus
 
 Replace `your-render-service` with the actual Render service name from your Render dashboard.
