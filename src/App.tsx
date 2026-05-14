@@ -37,7 +37,7 @@ function App() {
   const { isAuthenticated, user } = useAuthStore();
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Toaster
         position="top-right"
         toastOptions={{
