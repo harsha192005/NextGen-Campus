@@ -1,448 +1,328 @@
 # Deployment Guide
 
-Complete guide to deploy the NextGen Smart Campus platform to production.
+Production deployment guide for the NextGen Smart Campus platform.
 
-## 🚀 Deployment Overview
+## Current Repository
 
-- **Frontend**: Vercel (Recommended) or Netlify
-- **Backend**: Render, Railway, or Heroku
-- **Database**: MongoDB Atlas (Free Tier)
-- **Media Storage**: Cloudinary (Free Tier)
-- **AI**: Google Gemini API (Free Tier)
+GitHub:
 
-## 📱 Frontend Deployment (Vercel)
-
-### Prerequisites
-- GitHub account
-- Vercel account (free)
-- Project pushed to GitHub
-
-### Steps
-
-1. **Push to GitHub**
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit"
-   git branch -M main
-   git remote add origin https://github.com/yourusername/nextgen-campus.git
-   git push -u origin main
-   ```
-
-2. **Deploy to Vercel**
-   - Visit [vercel.com](https://vercel.com)
-   - Click "New Project"
-   - Import your GitHub repository
-   - Configure project:
-     - Framework Preset: Vite
-     - Root Directory: ./
-     - Build Command: `npm run build`
-     - Output Directory: `dist`
-
-3. **Environment Variables**
-   Add in Vercel dashboard:
-   ```
-   VITE_API_URL=https://your-backend.onrender.com/api
-   VITE_GEMINI_API_KEY=your_gemini_api_key
-   VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
-   VITE_CLOUDINARY_UPLOAD_PRESET=your_upload_preset
-   ```
-
-4. **Deploy**
-   - Click "Deploy"
-   - Wait for build to complete
-   - Your site will be live at `https://your-project.vercel.app`
-
-### Custom Domain (Optional)
-
-1. Go to Project Settings → Domains
-2. Add your custom domain
-3. Update DNS records as instructed
-4. Wait for SSL certificate
-
-## 🔧 Backend Deployment (Render)
-
-### Prerequisites
-- Render account (free)
-- Backend code ready
-- MongoDB Atlas database
-
-### Steps
-
-1. **Prepare Backend**
-   ```bash
-   cd backend
-   # Ensure package.json has:
-   "scripts": {
-     "start": "node dist/server.js",
-     "build": "tsc"
-   }
-   ```
-
-2. **Create Web Service on Render**
-   - Visit [render.com](https://render.com)
-   - Click "New +" → "Web Service"
-   - Connect GitHub repository
-   - Configure:
-     - Name: nextgen-campus-api
-     - Environment: Node
-     - Build Command: `npm install && npm run build`
-     - Start Command: `npm start`
-     - Instance Type: Free
-
-3. **Environment Variables**
-   Add in Render dashboard:
-   ```
-   PORT=5000
-   NODE_ENV=production
-   MONGODB_URI=mongodb+srv://...
-   JWT_SECRET=your_jwt_secret
-   GEMINI_API_KEY=your_key
-   CLOUDINARY_CLOUD_NAME=your_name
-   CLOUDINARY_API_KEY=your_key
-   CLOUDINARY_API_SECRET=your_secret
-   FRONTEND_URL=https://your-project.vercel.app
-   ```
-
-4. **Deploy**
-   - Click "Create Web Service"
-   - Wait for deployment
-   - Your API will be live at `https://your-backend.onrender.com`
-
-### Important Notes
-- Free tier sleeps after 15 min of inactivity
-- First request after sleep takes ~30 seconds
-- Upgrade to paid tier for always-on service
-
-## 💾 MongoDB Atlas Setup
-
-### Steps
-
-1. **Create Cluster**
-   - Visit [mongodb.com/cloud/atlas](https://www.mongodb.com/cloud/atlas)
-   - Sign up/Login
-   - Create new cluster (Free M0 tier)
-   - Choose cloud provider and region
-
-2. **Database Access**
-   - Go to Database Access
-   - Add New Database User
-   - Set username and password
-   - Grant readWrite permissions
-
-3. **Network Access**
-   - Go to Network Access
-   - Add IP Address
-   - Allow access from anywhere: `0.0.0.0/0`
-   - (For production, restrict to specific IPs)
-
-4. **Get Connection String**
-   - Click "Connect" on your cluster
-   - Choose "Connect your application"
-   - Copy connection string
-   - Replace `<password>` with your password
-   - Add database name: `/nextgen-campus`
-
-## ☁️ Cloudinary Setup
-
-### Steps
-
-1. **Create Account**
-   - Visit [cloudinary.com](https://cloudinary.com)
-   - Sign up for free account
-
-2. **Get Credentials**
-   - Go to Dashboard
-   - Copy:
-     - Cloud Name
-     - API Key
-     - API Secret
-
-3. **Create Upload Preset**
-   - Go to Settings → Upload
-   - Add upload preset
-   - Set to "unsigned" for frontend uploads
-   - Configure folder and transformations
-
-4. **Add to Environment Variables**
-   ```env
-   VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
-   VITE_CLOUDINARY_UPLOAD_PRESET=your_preset
-   ```
-
-## 🤖 Google Gemini API Setup
-
-### Steps
-
-1. **Get API Key**
-   - Visit [ai.google.dev](https://ai.google.dev)
-   - Click "Get API key"
-   - Create new project or use existing
-   - Generate API key
-
-2. **Add to Environment**
-   ```env
-   VITE_GEMINI_API_KEY=your_api_key
-   ```
-
-3. **Rate Limits (Free Tier)**
-   - 60 requests per minute
-   - 1,500 requests per day
-   - Implement caching to stay within limits
-
-## 📧 EmailJS Setup (Optional)
-
-### Steps
-
-1. **Create Account**
-   - Visit [emailjs.com](https://www.emailjs.com)
-   - Sign up for free
-
-2. **Create Email Service**
-   - Add email service (Gmail, Outlook, etc.)
-   - Follow authentication steps
-
-3. **Create Email Template**
-   - Go to Email Templates
-   - Create templates for:
-     - Registration confirmation
-     - Event reminders
-     - Certificate emails
-
-4. **Get Credentials**
-   - Service ID
-   - Template ID
-   - User ID (Public Key)
-
-5. **Add to Environment**
-   ```env
-   VITE_EMAILJS_SERVICE_ID=service_xxx
-   VITE_EMAILJS_TEMPLATE_ID=template_xxx
-   VITE_EMAILJS_PUBLIC_KEY=xxx
-   ```
-
-## 🔒 Security Checklist
-
-### Before Deployment
-
-- [ ] Remove console.logs
-- [ ] Set strong JWT secret
-- [ ] Configure CORS properly
-- [ ] Enable rate limiting
-- [ ] Validate all inputs
-- [ ] Sanitize user data
-- [ ] Use environment variables
-- [ ] Enable HTTPS only
-- [ ] Add security headers
-- [ ] Implement CSP
-- [ ] Set up monitoring
-- [ ] Configure error logging
-
-### Environment Variables Security
-
-- ✅ Use different keys for dev/prod
-- ✅ Never commit .env files
-- ✅ Rotate keys periodically
-- ✅ Use secrets management tools
-- ✅ Restrict database access
-
-## 📊 Monitoring & Analytics
-
-### Recommended Tools
-
-1. **Vercel Analytics** - Frontend performance
-2. **Sentry** - Error tracking
-3. **LogRocket** - Session replay
-4. **Google Analytics** - User analytics
-5. **Uptime Robot** - Uptime monitoring
-
-### Setup Sentry (Optional)
-
-```bash
-npm install @sentry/react @sentry/vite-plugin
+```text
+https://github.com/harsha192005/NextGen-Campus.git
 ```
 
-Add to main.tsx:
-```typescript
-import * as Sentry from "@sentry/react";
+Main branch:
 
-Sentry.init({
-  dsn: "your-sentry-dsn",
-  environment: import.meta.env.MODE,
-});
+```text
+main
 ```
 
-## 🚀 Performance Optimization
+Frontend GitHub Pages URL:
 
-### Frontend
+```text
+https://harsha192005.github.io/NextGen-Campus/
+```
 
-1. **Code Splitting**
-   ```typescript
-   const Dashboard = lazy(() => import('./pages/Dashboard'));
-   ```
+## Deployment Overview
 
-2. **Image Optimization**
-   - Use Cloudinary transformations
-   - Lazy load images
-   - Use WebP format
+- Frontend: GitHub Pages is already configured, Vercel is recommended for full production.
+- Backend API: Render.
+- Database: MongoDB Atlas.
+- Media storage: Cloudinary.
+- AI: Google Gemini API.
+- Email: EmailJS.
 
-3. **Caching**
-   - Enable browser caching
-   - Use service workers
-   - Implement CDN
+## Important Production Flow
 
-4. **Bundle Size**
-   ```bash
-   npm run build -- --analyze
-   ```
+Deploy in this order:
 
-### Backend
+1. Push code to GitHub.
+2. Deploy backend on Render.
+3. Copy the Render backend URL.
+4. Add frontend env variable `VITE_API_URL=https://your-render-api.onrender.com/api`.
+5. Deploy frontend on Vercel or GitHub Pages.
+6. Update Render `FRONTEND_URL` to the final frontend URL.
+7. Redeploy backend so CORS and Socket.io accept the live frontend.
 
-1. **Database Indexing**
-   ```typescript
-   userSchema.index({ email: 1 });
-   eventSchema.index({ startDate: 1, status: 1 });
-   ```
+## GitHub Push
 
-2. **Caching with Redis**
-   ```typescript
-   import redis from 'redis';
-   const client = redis.createClient();
-   ```
+This project is already connected to GitHub.
 
-3. **Compression**
-   ```typescript
-   import compression from 'compression';
-   app.use(compression());
-   ```
+For future updates:
 
-## 🧪 Testing Before Deployment
-
-### Frontend Tests
 ```bash
-npm run test
+git add .
+git commit -m "Update project"
+git push
+```
+
+Never commit `.env` or `backend/.env`. They are ignored by `.gitignore`.
+
+## Frontend Option 1: GitHub Pages
+
+GitHub Pages deployment is configured in:
+
+```text
+.github/workflows/pages.yml
+```
+
+The workflow runs automatically on every push to `main`.
+
+### Enable GitHub Pages
+
+In GitHub:
+
+1. Open `harsha192005/NextGen-Campus`.
+2. Go to `Settings`.
+3. Open `Pages`.
+4. Set source to `GitHub Actions`.
+5. Save.
+
+### Required GitHub Secret
+
+Add this repository secret:
+
+```text
+VITE_API_URL=https://your-render-api.onrender.com/api
+```
+
+Location:
+
+```text
+GitHub repo -> Settings -> Secrets and variables -> Actions -> New repository secret
+```
+
+### Local GitHub Pages Build Check
+
+```bash
+npm run build -- --base=/NextGen-Campus/
+```
+
+## Frontend Option 2: Vercel
+
+Vercel is better for production because it supports custom domains, previews, and easy environment management.
+
+### Steps
+
+1. Visit `https://vercel.com`.
+2. Click `New Project`.
+3. Import `https://github.com/harsha192005/NextGen-Campus`.
+4. Use these settings:
+   - Framework Preset: `Vite`
+   - Root Directory: `./`
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+5. Add environment variables:
+
+```env
+VITE_API_URL=https://your-render-api.onrender.com/api
+VITE_EMAILJS_SERVICE_ID=
+VITE_EMAILJS_TEMPLATE_ID=
+VITE_EMAILJS_PUBLIC_KEY=
+VITE_FIREBASE_API_KEY=
+VITE_FIREBASE_AUTH_DOMAIN=
+VITE_FIREBASE_PROJECT_ID=
+VITE_FIREBASE_STORAGE_BUCKET=
+VITE_FIREBASE_MESSAGING_SENDER_ID=
+VITE_FIREBASE_APP_ID=
+```
+
+6. Deploy.
+
+After Vercel deploys, copy the Vercel URL and set it as `FRONTEND_URL` in Render.
+
+## Backend Deployment: Render
+
+The backend is ready for Render using:
+
+```text
+render.yaml
+```
+
+### Render Setup
+
+1. Visit `https://render.com`.
+2. Click `New +`.
+3. Choose `Blueprint` if using `render.yaml`, or choose `Web Service`.
+4. Connect `https://github.com/harsha192005/NextGen-Campus`.
+5. For manual Web Service setup:
+   - Name: `nextgen-smart-campus-api`
+   - Environment: `Node`
+   - Root Directory: `backend`
+   - Build Command: `npm install && npm run build`
+   - Start Command: `npm start`
+   - Health Check Path: `/api/health`
+
+### Render Environment Variables
+
+Set these in Render:
+
+```env
+NODE_ENV=production
+PORT=5000
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/nextgen-campus
+JWT_SECRET=replace_with_long_random_secret
+JWT_EXPIRE=7d
+FRONTEND_URL=https://your-frontend-url
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+GEMINI_API_KEY=
+EMAILJS_SERVICE_ID=
+EMAILJS_TEMPLATE_ID=
+EMAILJS_USER_ID=
+ADMIN_EMAIL=harsha7411156@gmail.com
+ADMIN_PASSWORD=replace_before_deploy
+```
+
+Do not use the local `.env` values directly in public docs or commits.
+
+### Backend Health Check
+
+After Render deploys, test:
+
+```text
+https://your-render-api.onrender.com/api/health
+```
+
+Expected response:
+
+```json
+{
+  "success": true,
+  "status": "ok"
+}
+```
+
+## MongoDB Atlas
+
+1. Create a MongoDB Atlas cluster.
+2. Create a database user with read/write access.
+3. Add Network Access rule:
+
+```text
+0.0.0.0/0
+```
+
+4. Copy the connection string.
+5. Add the database name:
+
+```text
+/nextgen-campus
+```
+
+Example:
+
+```env
+MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/nextgen-campus
+```
+
+## Cloudinary
+
+Set these only on the backend host:
+
+```env
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+```
+
+## Gemini
+
+Set this only on the backend host:
+
+```env
+GEMINI_API_KEY=
+```
+
+## EmailJS
+
+Backend uses:
+
+```env
+EMAILJS_SERVICE_ID=
+EMAILJS_TEMPLATE_ID=
+EMAILJS_USER_ID=
+```
+
+Frontend may use:
+
+```env
+VITE_EMAILJS_SERVICE_ID=
+VITE_EMAILJS_TEMPLATE_ID=
+VITE_EMAILJS_PUBLIC_KEY=
+```
+
+## Production Checks
+
+Run locally before pushing:
+
+```bash
 npm run build
-npm run preview
+npm --prefix backend run build
 ```
 
-### Backend Tests
-```bash
-npm run test
-npm run build
-npm start
+Check these after deployment:
+
+- Login works.
+- Admin login works.
+- Event registration saves to MongoDB.
+- QR code registration pass is generated.
+- Admin attendance scanner can mark attendance.
+- Certificates can be generated.
+- Team creation and join requests work.
+- Payment status updates work.
+- Dashboard data loads from API.
+
+## Troubleshooting
+
+### Frontend shows blank page
+
+Check:
+
+- `VITE_API_URL` is set correctly.
+- GitHub Pages source is set to `GitHub Actions`.
+- Build command uses `--base=/NextGen-Campus/` for GitHub Pages.
+- Browser console has no API or routing errors.
+
+### API connection fails
+
+Check:
+
+- Render service is awake.
+- `FRONTEND_URL` on Render matches the live frontend URL.
+- `MONGODB_URI` is valid.
+- Atlas Network Access allows Render.
+
+### Admin cannot login
+
+Check Render logs for `ensureAdminUser`.
+
+Confirm these env vars exist:
+
+```env
+ADMIN_EMAIL=harsha7411156@gmail.com
+ADMIN_PASSWORD=your_production_password
+JWT_SECRET=your_secret
 ```
 
-### Manual Testing Checklist
+### CORS error
 
-- [ ] Authentication works
-- [ ] All routes accessible
-- [ ] Forms validate properly
-- [ ] Images upload correctly
-- [ ] PDFs generate
-- [ ] QR codes work
-- [ ] Responsive on mobile
-- [ ] Dark mode works
-- [ ] Error handling works
+Set Render:
 
-## 🔄 CI/CD Setup (Optional)
-
-### GitHub Actions
-
-Create `.github/workflows/deploy.yml`:
-
-```yaml
-name: Deploy
-on:
-  push:
-    branches: [main]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '18'
-      - run: npm ci
-      - run: npm run build
-      - run: npm test
+```env
+FRONTEND_URL=https://your-frontend-url
 ```
 
-## 📝 Post-Deployment
+Then redeploy the backend.
 
-### 1. Test Production
-- Test all features
-- Check API endpoints
-- Verify database connections
-- Test file uploads
-- Check email notifications
+## Final Go-Live Checklist
 
-### 2. Setup Monitoring
-- Configure uptime monitoring
-- Set up error tracking
-- Enable analytics
-
-### 3. Documentation
-- Update README with live URLs
-- Document API endpoints
-- Create user guide
-
-### 4. Backup Strategy
-- Enable MongoDB automated backups
-- Export production data weekly
-- Document restore procedure
-
-## 🆘 Troubleshooting
-
-### Common Issues
-
-**Build Fails**
-```bash
-# Clear cache and rebuild
-rm -rf node_modules dist
-npm install
-npm run build
-```
-
-**API Connection Error**
-- Check CORS settings
-- Verify API URL in frontend
-- Check network access in MongoDB
-
-**Environment Variables Not Working**
-- Restart deployment
-- Check variable names (case-sensitive)
-- Verify values have no spaces
-
-**Slow Performance**
-- Check bundle size
-- Enable caching
-- Optimize images
-- Add CDN
-
-## 📞 Support Resources
-
-- [Vercel Documentation](https://vercel.com/docs)
-- [Render Documentation](https://render.com/docs)
-- [MongoDB Atlas Docs](https://docs.atlas.mongodb.com)
-- [Cloudinary Docs](https://cloudinary.com/documentation)
-
-## 🎉 Go Live Checklist
-
-- [ ] All environment variables set
-- [ ] Database connected
-- [ ] API endpoints tested
-- [ ] Frontend deployed
-- [ ] Backend deployed
-- [ ] Custom domain configured (optional)
-- [ ] SSL certificate active
-- [ ] Monitoring enabled
-- [ ] Backups configured
-- [ ] Documentation updated
-- [ ] Team notified
-- [ ] Launch! 🚀
-
----
-
-**Congratulations on deploying your NextGen Smart Campus platform! 🎊**
+- [ ] Backend deployed on Render.
+- [ ] MongoDB Atlas connected.
+- [ ] Render `/api/health` works.
+- [ ] Frontend deployed on Vercel or GitHub Pages.
+- [ ] `VITE_API_URL` points to Render.
+- [ ] Render `FRONTEND_URL` points to frontend.
+- [ ] Admin account is created.
+- [ ] Registration, QR attendance, certificates, teams, and dashboards tested.
+- [ ] Secrets are stored only in host dashboards, not GitHub.
